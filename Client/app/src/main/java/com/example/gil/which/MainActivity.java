@@ -9,33 +9,57 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.example.gil.which.adapters.MySimpleAdapter;
+import com.example.gil.which.helpers.HttpHandler;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     private String TAG = MainActivity.class.getSimpleName();
     private ListView lv;
 
-    ArrayList<HashMap<String, String>> itemList;
+    List<Map<String, Object>> data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        itemList = new ArrayList<>();
-        lv = (ListView) findViewById(R.id.list);
-
+//        itemList = new ArrayList<>();
+//        lv = (ListView) findViewById(R.id.list);
+//
+        data = new ArrayList<Map<String, Object>>();
+        lv = (ListView) findViewById(R.id.listView1);
         new GetPosts().execute();
-    }
 
+//        Map<String, Object> map = new HashMap<String, Object>();
+//
+//        map.put("userphoto", "http://images2.fanpop.com/images/photos/3100000/mike-michael-scofield-3137164-346-500.jpg");
+//        map.put("username", "Michael Scofield");
+//        map.put("choice1", "https://s-media-cache-ak0.pinimg.com/736x/34/9b/27/349b27628868842c346cd385de28b0f2.jpg");
+//        map.put("choice2", "http://s-media-cache-ak0.pinimg.com/564x/1d/9e/e6/1d9ee66aebc07c455a341a5a1252d74d.jpg");
+//        map.put("title1", "Winter");
+//        map.put("title2", "Summer");
+//        map.put("timestamp", "About an hour ago");
+//
+//        data.add(map);
+//        MySimpleAdapter adapter = new MySimpleAdapter(MainActivity.this, data,
+//                R.layout.row, new String[] {}, new int[] {});
+//        lv.setAdapter(adapter);
+//    }
+    }
     private class GetPosts extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {
@@ -46,12 +70,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... arg0) {
-            // HttpHandler sh = new HttpHandler();
+            HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            // String url = "http://api.androidhive.info/contacts/";
-            // String jsonStr = sh.makeServiceCall(url);
+             String url = "http://0.0.0.0:8000/post.json";
+             String jsonStr = sh.makeServiceCall(url);
 
-            String jsonStr = "{  \"date\": \"4/12/17     16:49:17\",  \"user\": {    \"userphoto\": \"url\",    \"username\": \"Michael Scofield\"  },  \"choice1\": {    \"image\": \"url\",    \"title\": \"winter\"  },  \"choice2\": {    \"image\": \"url\",    \"title\": \"summer\"  }}";
+
+            //String jsonStr = "{  \"date\": \"About an hour ago\",  \"user\": {    \"userphoto\": \"http:\\/\\/images2.fanpop.com\\/images\\/photos\\/3100000\\/ike-michael-scofield-3137164-346-500.jpg\",    \"username\": \"Michael Scofield\"  },  \"choice1\": {    \"image\": \"http:\\/\\/s-media-cache-ak0.pinimg.com\\/736x\\/34\\/9b\\/27\\/349b27628868842c346cd385de28b0f2.jpg\",    \"title\": \"winter\"  },  \"choice2\": {    image\": \"http:\\/\\/s-media-cache-ak0.pinimg.com\\/564x\\/1d\\/9e\\/e6\\/1d9ee66aebc07c455a341a5a1252d74d.jpg\",    \"title\": \"summer\"  }}";
+
             Log.d("bla", "Response from url: " + jsonStr);
             if (jsonStr != null) {
                 try {
@@ -86,20 +112,21 @@ public class MainActivity extends AppCompatActivity {
                     String image2 = secondChoice.getString("image");
                     String title2 = secondChoice.getString("title");
 
-                    // tmp hash map for single contact
-                    HashMap<String, String> post = new HashMap<>();
+
+                    Map<String, Object> post = new HashMap<String, Object>();
 
                     // adding each child node to HashMap key => value
-                    post.put("userPhoto", userPhoto);
-                    post.put("userName", userName);
-                    post.put("formattedDate", formattedDate);
-                    post.put("image1", image1);
+                    post.put("userphoto", userPhoto);
+                    post.put("username", userName);
+                    post.put("timestamp", formattedDate);
+                    post.put("choice1", image1);
                     post.put("title1", title1);
-                    post.put("image2", image2);
+                    post.put("choice1", image2);
                     post.put("title2", title2);
 
-                    // adding contact to contact list
-                    itemList.add(post);
+
+                    data.add(post);
+
 
                 } catch (final JSONException e) {
                     Log.e(TAG, "Json parsing error: " + e.getMessage());
@@ -132,9 +159,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            ListAdapter adapter = new SimpleAdapter(MainActivity.this, itemList,
-                    R.layout.list_item, new String[]{ "userPhoto","userName", "formattedDate", "image1", "title1", "image2", "title2"},
-                    new int[]{R.id.userPhoto, R.id.userName, R.id.formattedDate, R.id.image1, R.id.title1, R.id.image2, R.id.title2});
+            MySimpleAdapter adapter = new MySimpleAdapter(MainActivity.this, data,
+                    R.layout.row, new String[] {}, new int[] {});
             lv.setAdapter(adapter);
         }
     }
