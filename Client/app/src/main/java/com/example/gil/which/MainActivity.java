@@ -61,22 +61,16 @@ public class MainActivity extends AppCompatActivity {
 //    }
     }
     private class GetPosts extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Toast.makeText(MainActivity.this,"Json Data is downloading",Toast.LENGTH_LONG).show();
-
-        }
 
         @Override
         protected Void doInBackground(Void... arg0) {
-            HttpHandler sh = new HttpHandler();
+            //HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-             String url = "http://0.0.0.0:8000/post.json";
-             String jsonStr = sh.makeServiceCall(url);
+            //String url = "http://0.0.0.0:8000/post.json";
+            //String jsonStr = sh.makeServiceCall(url);
 
 
-            //String jsonStr = "{  \"date\": \"About an hour ago\",  \"user\": {    \"userphoto\": \"http:\\/\\/images2.fanpop.com\\/images\\/photos\\/3100000\\/ike-michael-scofield-3137164-346-500.jpg\",    \"username\": \"Michael Scofield\"  },  \"choice1\": {    \"image\": \"http:\\/\\/s-media-cache-ak0.pinimg.com\\/736x\\/34\\/9b\\/27\\/349b27628868842c346cd385de28b0f2.jpg\",    \"title\": \"winter\"  },  \"choice2\": {    image\": \"http:\\/\\/s-media-cache-ak0.pinimg.com\\/564x\\/1d\\/9e\\/e6\\/1d9ee66aebc07c455a341a5a1252d74d.jpg\",    \"title\": \"summer\"  }}";
+            String jsonStr = "{  \"date\": \"About an hour ago\",  \"user\": {    \"userphoto\": \"http://www.konbini.com/wp-content/blogs.dir/3/files/2015/08/ok-810x492.jpg\",    \"username\": \"Michael Scofield\"  },  \"choice1\": {    \"image\": \"https://s-media-cache-ak0.pinimg.com/736x/34/9b/27/349b27628868842c346cd385de28b0f2.jpg\",    \"title\": \"winter\"  },  \"choice2\": {    \"image\": \"http://s-media-cache-ak0.pinimg.com/564x/1d/9e/e6/1d9ee66aebc07c455a341a5a1252d74d.jpg\",    \"title\": \"summer\"  }}";
 
             Log.d("bla", "Response from url: " + jsonStr);
             if (jsonStr != null) {
@@ -121,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     post.put("timestamp", formattedDate);
                     post.put("choice1", image1);
                     post.put("title1", title1);
-                    post.put("choice1", image2);
+                    post.put("choice2", image2);
                     post.put("title2", title2);
 
 
