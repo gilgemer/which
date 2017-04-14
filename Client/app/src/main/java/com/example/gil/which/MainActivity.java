@@ -37,115 +37,39 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        itemList = new ArrayList<>();
-//        lv = (ListView) findViewById(R.id.list);
-//
         data = new ArrayList<Map<String, Object>>();
         lv = (ListView) findViewById(R.id.listView1);
         new GetPosts().execute();
 
-//        Map<String, Object> map = new HashMap<String, Object>();
-//
-//        map.put("userphoto", "http://images2.fanpop.com/images/photos/3100000/mike-michael-scofield-3137164-346-500.jpg");
-//        map.put("username", "Michael Scofield");
-//        map.put("choice1", "https://s-media-cache-ak0.pinimg.com/736x/34/9b/27/349b27628868842c346cd385de28b0f2.jpg");
-//        map.put("choice2", "http://s-media-cache-ak0.pinimg.com/564x/1d/9e/e6/1d9ee66aebc07c455a341a5a1252d74d.jpg");
-//        map.put("title1", "Winter");
-//        map.put("title2", "Summer");
-//        map.put("timestamp", "About an hour ago");
-//
-//        data.add(map);
-//        MySimpleAdapter adapter = new MySimpleAdapter(MainActivity.this, data,
-//                R.layout.row, new String[] {}, new int[] {});
-//        lv.setAdapter(adapter);
-//    }
     }
+
     private class GetPosts extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... arg0) {
-            //HttpHandler sh = new HttpHandler();
+
+            String [] JSONUrls = {"http://192.168.1.13:8000/michael_post.json", "http://192.168.1.13:8000/lincoln_post.json"};
+            HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            //String url = "http://0.0.0.0:8000/post.json";
-            //String jsonStr = sh.makeServiceCall(url);
+            for (String url : JSONUrls) {
+                String jsonStr = sh.makeServiceCall(url);
 
+                Log.d("bla", "Response from url: " + jsonStr);
+                if (jsonStr != null) {
 
-            String jsonStr = "{  \"date\": \"About an hour ago\",  \"user\": {    \"userphoto\": \"http://www.konbini.com/wp-content/blogs.dir/3/files/2015/08/ok-810x492.jpg\",    \"username\": \"Michael Scofield\"  },  \"choice1\": {    \"image\": \"https://s-media-cache-ak0.pinimg.com/736x/34/9b/27/349b27628868842c346cd385de28b0f2.jpg\",    \"title\": \"winter\"  },  \"choice2\": {    \"image\": \"http://s-media-cache-ak0.pinimg.com/564x/1d/9e/e6/1d9ee66aebc07c455a341a5a1252d74d.jpg\",    \"title\": \"summer\"  }}";
+                    JSONObject jsonObj = null;
+                    try {
+                        jsonObj = new JSONObject(jsonStr);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
-            Log.d("bla", "Response from url: " + jsonStr);
-            if (jsonStr != null) {
-                try {
-                    JSONObject jsonObj = new JSONObject(jsonStr);
-
-                    // Getting JSON user object
-                    JSONObject user = jsonObj.getJSONObject("user");
-                    String userPhoto = user.getString("userphoto");
-                    String userName = user.getString("username");
-
-                    // Getting JSON date
-                    String date = jsonObj.getString("date");
-                    // Parsing the date
-                    // MM/dd/yy     HH:mm:ss
-                    // Just a test for a future possibility of using a more complex date format
-//                    SimpleDateFormat parser = new SimpleDateFormat("MM/dd/yy     HH:mm:ss");
-//                    try {
-//                        Date _date = parser.parse(date);
-//                    } catch (ParseException e) {
-//                        e.printStackTrace();
-//                    }
-//                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-//                    String formattedDate = formatter.format(date);
-                    String formattedDate = date;
-                    // Getting the first choice object
-                    JSONObject firstChoice = jsonObj.getJSONObject("choice1");
-                    String image1 = firstChoice.getString("image");
-                    String title1 = firstChoice.getString("title");
-
-                    // Getting the second choice object
-                    JSONObject secondChoice = jsonObj.getJSONObject("choice2");
-                    String image2 = secondChoice.getString("image");
-                    String title2 = secondChoice.getString("title");
-
-
-                    Map<String, Object> post = new HashMap<String, Object>();
-
-                    // adding each child node to HashMap key => value
-                    post.put("userphoto", userPhoto);
-                    post.put("username", userName);
-                    post.put("timestamp", formattedDate);
-                    post.put("choice1", image1);
-                    post.put("title1", title1);
-                    post.put("choice2", image2);
-                    post.put("title2", title2);
-
+                    Map<String, Object> post = PostJSONToMap(jsonObj);
 
                     data.add(post);
-
-
-                } catch (final JSONException e) {
-                    Log.e(TAG, "Json parsing error: " + e.getMessage());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(),
-                                    "Json parsing error: " + e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
-
                 }
-
-            } else {
-                Log.e(TAG, "Couldn't get json from server.");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Couldn't get json from server. Check LogCat for possible errors!",
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
             }
+
 
             return null;
         }
@@ -154,8 +78,63 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             MySimpleAdapter adapter = new MySimpleAdapter(MainActivity.this, data,
-                    R.layout.row, new String[] {}, new int[] {});
+                    R.layout.row, new String[]{}, new int[]{});
             lv.setAdapter(adapter);
+        }
+
+
+        /**
+         * @param jsonObj - jsonObj of a post
+         * @return a new Map holding the keys and values of the JSON object (According to
+         * the post pattern
+         */
+        protected Map<String, Object> PostJSONToMap(JSONObject jsonObj) {
+
+            Map<String, Object> post = null;
+
+            try {
+                JSONObject user = jsonObj.getJSONObject("user");
+                String userPhoto = user.getString("userphoto");
+                String userName = user.getString("username");
+
+                // Getting JSON date
+                String date = jsonObj.getString("date");
+                // In future, when a timestamp format is decided, the timestamp will be
+                // parsed here
+                String formattedDate = date;
+                // Getting the first choice object
+                JSONObject firstChoice = jsonObj.getJSONObject("choice1");
+                String image1 = firstChoice.getString("image");
+                String title1 = firstChoice.getString("title");
+
+                // Getting the second choice object
+                JSONObject secondChoice = jsonObj.getJSONObject("choice2");
+                String image2 = secondChoice.getString("image");
+                String title2 = secondChoice.getString("title");
+
+                post = new HashMap<String, Object>();
+
+                // adding each child node to HashMap key => value
+                post.put("userphoto", userPhoto);
+                post.put("username", userName);
+                post.put("timestamp", formattedDate);
+                post.put("choice1", image1);
+                post.put("title1", title1);
+                post.put("choice2", image2);
+                post.put("title2", title2);
+
+            } catch (final JSONException e) {
+                Log.e(TAG, "Json parsing error: " + e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Json parsing error: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            return post;
         }
     }
 }
