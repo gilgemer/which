@@ -16,7 +16,11 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
+<<<<<<< HEAD
         sha1="97ece44ef06292dce16b010b06729f269d3ececa">
+=======
+        sha1="3df298f3597d2a06fc5ed103fb5a5e2703047bec">
+>>>>>>> gil
         <dex dex="/home/gil/IdeaProjects/which/Client/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_143a72cff3639fe9e30f322484b125096776bd4d/classes.dex" />
     </item>
 
