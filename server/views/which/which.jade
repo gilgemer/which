@@ -1,0 +1,24 @@
+doctype html
+html
+    head
+        title Your basic web app structure
+    body
+        h1
+            | This is a test page for BASIC WHICH.
+        p
+            | question:
+            = which.question
+
+        h3
+            | Image 1:
+            = which.picture_1.description
+
+        img(src=which.picture_1.url)
+
+        h3
+            | Image 2:
+            =which.picture_2.description
+
+        img(src=which.picture_2.url)
+
+        a(href="/") Back
