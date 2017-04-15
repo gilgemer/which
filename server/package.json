@@ -1,0 +1,41 @@
+{
+  "name": "base-express",
+  "version": "1.0.0",
+  "description": "Basic structure for Express web apps.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "mocha tests/**"
+  },
+  "keywords": [
+    "base",
+    "project",
+    "node",
+    "express",
+    "structure"
+  ],
+  "author": "Terlici Ltd.",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "jade": "^1.11.0",
+    "mongodb": "^2.2.25",
+    "npm": "^4.5.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.4",
+    "should": "^6.0.1"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terlici/base-express.git"
+  },
+  "bugs": {
+    "url": "https://github.com/terlici/base-express/issues"
+  },
+  "homepage": "https://github.com/terlici/base-express#readme"
+}

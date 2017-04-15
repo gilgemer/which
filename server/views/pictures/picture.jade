@@ -1,0 +1,20 @@
+doctype html
+html
+    head
+        title Your basic web app structure
+    body
+        h1
+            | This is a test page for picture.
+        p
+            | picture description:
+            = picture.description
+        p
+            | the url is:
+            = picture.url
+
+        h3
+            | Image 1:
+
+        img(src=picture.url)
+
+        a(href="/") Back
